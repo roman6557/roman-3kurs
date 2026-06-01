@@ -44,39 +44,41 @@
     </div>
 
     <script type="module">
-        // Импортируем официальный клиент Supabase
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        // Данные подключения к твоей базе данных
-        const URL = 'https://pkllhpwpyznbmirhwezc.supabase.co';
-        const KEY = 'sb_publishable_jh6KIEbCx9RI3QwrVU_EDQ_-ezVsgzC';
+        // 1. УКАЗЫВАЕМ ТВОЙ АДРЕС ИЗ СКРИНШОТА
+        const URL = 'https://pkllhpwpyznbmirhwzec.supabase.co';
+        
+        // 2. ВНИМАНИЕ: Сюда нужно вставить ТВОЙ anon/public ключ!
+        // Зайди в Supabase -> Project Settings (шестеренка внизу слева) -> API -> скопируй anon/public key
+        const KEY = 'ВСТАВЬ_СЮДА_СВОЙ_ANON_KEY'; 
+        
         const supabase = createClient(URL, KEY);
 
-        // Твой персональный ID записи из таблицы profiles 
-        // ВНИМАНИЕ: Если ты создашь новую строку, замени этот ID на свой!
+        // 3. УКАЗЫВАЕМ ТВОЙ ID ИЗ ТАБЛИЦЫ (изменили на твой UUID со скриншота)
         const MY_ID = '9a32646f-c9f4-49a6-8cca-98de1edf1d3d'; 
 
-        // Функция изменения статуса (привязана к window, чтобы кнопки в HTML её видели)
+        // Функция изменения статуса
         window.changeStatus = async (text, color) => {
             const { error } = await supabase
-                .from('profiles')
-                .update({ status: text, color: color }) // обновляем статус и цвет в БД
-                .eq('9a32646f-c9f4-49a6-8cca-98de1edf1d3d', MY_ID);
+                .from('Roman') // Меняем profiles на имя твоей таблицы Roman
+                .update({ status: text, color: color })
+                .eq('id', MY_ID);
 
             if (error) {
                 alert("Ошибка! Проверьте RLS политики в Supabase.");
                 console.error(error);
             } else {
-                fetchGroup(); // Обновляем список на экране после успешного изменения
+                fetchGroup(); 
             }
         };
 
-        // Функция получения данных всех пользователей группы
+        // Функция получения данных
         async function fetchGroup() {
             const { data, error } = await supabase
-                .from('profiles')
+                .from('Roman') // Меняем profiles на имя твоей таблицы Roman
                 .select('*')
-                .order('username', { ascending: true }); // Сортировка по имени по алфавиту
+                .order('username', { ascending: true });
 
             if (error) {
                 console.error("Ошибка получения данных:", error);
@@ -84,20 +86,16 @@
             }
 
             const container = document.getElementById('group-container');
-            container.innerHTML = ''; // Очищаем старый список
+            container.innerHTML = ''; 
 
-            // Перебираем всех пользователей и выводим на страницу
             data.forEach(profile => {
-                // Ищем текущего пользователя, чтобы отобразить его имя в верхней карточке
                 if (profile.id === MY_ID) {
                     document.getElementById('current-user').innerText = profile.username;
                 }
 
-                // Создаем элемент строки для монитора группы
                 const userRow = document.createElement('div');
                 userRow.className = "flex items-start space-x-3 pt-2 pb-2 border-b border-gray-100 last:border-0";
                 
-                // Наполняем версткой (цветной кружок + имя + статус)
                 userRow.innerHTML = `
                     <span class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0" style="background-color: ${profile.color || '#ccc'}"></span>
                     <div>
@@ -109,7 +107,6 @@
             });
         }
 
-        // Запускаем первичную загрузку данных при открытии страницы
         fetchGroup();
     </script>
 </body>

@@ -8,6 +8,10 @@
         select, button { padding: 0.5rem 1rem; font-size: 1rem; margin: 1rem; }
         #statuses { list-style: none; padding: 0; }
         li { background: #f3f4f6; margin: 0.5rem; padding: 1rem; border-radius: 0.5rem; }
+        .current-user { background: #dbeafe; border: 2px solid #3b82f6; font-weight: bold; }
+        .status-online { color: #16a34a; }
+        .status-away { color: #eab308; }
+        .status-dnd { color: #dc2626; }
     </style>
 </head>
 <body>
@@ -29,68 +33,121 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-    // ========== ПОДСТАВЬТЕ СВОИ ДАННЫЕ ==========
+    // ========== ВАШИ ДАННЫЕ (ПРОВЕРЕНО) ==========
     const SUPABASE_URL = "https://pkllhpwpyznbmirhwzec.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_jh6KIEbCx9RI3QwrVU_EDQ_-ezVsgzC";
     const MY_USER_ID = "9a32646f-c9f4-49a6-8cca-98de1edf1d3d";
-    // ===========================================
+    // =============================================
 
+    // СОЗДАЁМ КЛИЕНТ ТОЛЬКО ОДИН РАЗ
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Загрузить всех пользователей
+    // ДОБАВЛЯЕМ ПРОВЕРКУ ПОДКЛЮЧЕНИЯ
+    async function checkConnection() {
+        console.log("🔌 Проверка подключения к Supabase...");
+        const { data, error } = await supabase.from("profiles").select("*");
+        if (error) {
+            console.error("❌ Ошибка подключения:", error);
+        } else {
+            console.log("✅ Подключение успешно! Найдено пользователей:", data.length);
+            console.log("📋 Список пользователей:", data);
+        }
+        return { data, error };
+    }
+
+    // ЗАГРУЗИТЬ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
     async function loadStatuses() {
+        console.log("🔄 Загрузка статусов...");
         const { data, error } = await supabase
             .from("profiles")
             .select("id, username, status");
 
         if (error) {
-            console.error("Ошибка загрузки:", error);
+            console.error("❌ Ошибка загрузки:", error);
+            alert("Ошибка загрузки: " + error.message);
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            console.warn("⚠️ Нет пользователей в таблице!");
+            document.getElementById("statuses").innerHTML = "<li>📭 Нет пользователей. Добавьте себя в таблицу Supabase</li>";
             return;
         }
 
         const list = document.getElementById("statuses");
         list.innerHTML = "";
+        
         data.forEach(user => {
             const li = document.createElement("li");
+            
+            // Эмодзи статуса
             let statusEmoji = "🟢";
             if (user.status === "away") statusEmoji = "🌙";
             if (user.status === "dnd") statusEmoji = "⛔";
-            li.textContent = `${user.username} — ${statusEmoji} ${user.status}`;
+            
+            // Текст статуса на русском
+            let statusText = "онлайн";
+            if (user.status === "away") statusText = "отошёл";
+            if (user.status === "dnd") statusText = "не беспокоить";
+            
+            li.textContent = `${user.username} — ${statusEmoji} ${statusText}`;
+            
+            // Подсветка текущего пользователя
+            if (user.id === MY_USER_ID) {
+                li.classList.add("current-user");
+                li.textContent = `👤 ${user.username} (это вы) — ${statusEmoji} ${statusText}`;
+            }
+            
             list.appendChild(li);
         });
+        
+        console.log("✅ Статусы загружены");
     }
 
-    // Обновить свой статус
+    // ОБНОВИТЬ СВОЙ СТАТУС
     async function updateMyStatus() {
         const newStatus = document.getElementById("statusSelect").value;
-        const { error } = await supabase
+        console.log("📤 Обновление статуса на:", newStatus);
+        
+        const { data, error } = await supabase
             .from("profiles")
             .update({ status: newStatus })
-            .eq("id", MY_USER_ID);
+            .eq("id", MY_USER_ID)
+            .select();
 
         if (error) {
+            console.error("❌ Ошибка обновления:", error);
             alert("Ошибка обновления: " + error.message);
         } else {
+            console.log("✅ Статус обновлён!", data);
             alert("Статус обновлён!");
             loadStatuses(); // перезагружаем список
         }
     }
 
-    // Подписка на изменения в реальном времени
+    // ПОДПИСКА НА ИЗМЕНЕНИЯ В РЕАЛЬНОМ ВРЕМЕНИ
     function subscribeToChanges() {
+        console.log("🔔 Подписка на изменения в реальном времени...");
         const channel = supabase
             .channel("profiles-changes")
             .on(
                 "postgres_changes",
-                { event: "UPDATE", schema: "public", table: "profiles" },
-                () => loadStatuses()  // перезагрузить при любом обновлении
+                { event: "*", schema: "public", table: "profiles" },
+                (payload) => {
+                    console.log("🔄 Получено изменение:", payload);
+                    loadStatuses();
+                }
             )
-            .subscribe();
+            .subscribe((status) => {
+                console.log("📡 Статус подписки:", status);
+            });
     }
 
-    // Запуск
-    window.onload = () => {
-        loadStatuses();
+    // ЗАПУСК ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+    window.onload = async () => {
+        console.log("🚀 Страница загружена, инициализация...");
+        await checkConnection();
+        await loadStatuses();
         subscribeToChanges();
         document.getElementById("updateBtn").onclick = updateMyStatus;
     };

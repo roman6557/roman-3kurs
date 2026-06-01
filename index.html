@@ -54,14 +54,14 @@
 
         // Твой персональный ID записи из таблицы profiles 
         // ВНИМАНИЕ: Если ты создашь новую строку, замени этот ID на свой!
-        const MY_ID = '4bc5694e-89f8-47d9-9b60-23dbd2439122'; 
+        const MY_ID = '9a32646f-c9f4-49a6-8cca-98de1edf1d3d'; 
 
         // Функция изменения статуса (привязана к window, чтобы кнопки в HTML её видели)
         window.changeStatus = async (text, color) => {
             const { error } = await supabase
                 .from('profiles')
                 .update({ status: text, color: color }) // обновляем статус и цвет в БД
-                .eq('id', MY_ID);
+                .eq('9a32646f-c9f4-49a6-8cca-98de1edf1d3d', MY_ID);
 
             if (error) {
                 alert("Ошибка! Проверьте RLS политики в Supabase.");

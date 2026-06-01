@@ -1,156 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Монитор статусов</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        body { font-family: system-ui, sans-serif; max-width: 600px; margin: 2rem auto; text-align: center; }
-        select, button { padding: 0.5rem 1rem; font-size: 1rem; margin: 1rem; }
-        #statuses { list-style: none; padding: 0; }
-        li { background: #f3f4f6; margin: 0.5rem; padding: 1rem; border-radius: 0.5rem; }
-        .current-user { background: #dbeafe; border: 2px solid #3b82f6; font-weight: bold; }
-        .status-online { color: #16a34a; }
-        .status-away { color: #eab308; }
-        .status-dnd { color: #dc2626; }
+        body { font-family: system-ui, -apple-system, sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4 space-y-6">
 
-<h1>📡 Монитор статусов</h1>
-
-<div>
-    <p>Ваш статус:</p>
-    <select id="statusSelect">
-        <option value="online">🟢 Онлайн</option>
-        <option value="away">🌙 Отошёл</option>
-        <option value="dnd">⛔ Не беспокоить</option>
-    </select>
-    <button id="updateBtn">Обновить статус</button>
-</div>
-
-<h2>👥 Пользователи</h2>
-<ul id="statuses"></ul>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-    // ========== ВАШИ ДАННЫЕ (ПРОВЕРЕНО) ==========
-    const SUPABASE_URL = "https://pkllhpwpyznbmirhwzec.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_jh6KIEbCx9RI3QwrVU_EDQ_-ezVsgzC";
-    const MY_USER_ID = "9a32646f-c9f4-49a6-8cca-98de1edf1d3d";
-    // =============================================
-
-    // СОЗДАЁМ КЛИЕНТ ТОЛЬКО ОДИН РАЗ
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // ДОБАВЛЯЕМ ПРОВЕРКУ ПОДКЛЮЧЕНИЯ
-    async function checkConnection() {
-        console.log("🔌 Проверка подключения к Supabase...");
-        const { data, error } = await supabase.from("profiles").select("*");
-        if (error) {
-            console.error("❌ Ошибка подключения:", error);
-        } else {
-            console.log("✅ Подключение успешно! Найдено пользователей:", data.length);
-            console.log("📋 Список пользователей:", data);
-        }
-        return { data, error };
-    }
-
-    // ЗАГРУЗИТЬ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
-    async function loadStatuses() {
-        console.log("🔄 Загрузка статусов...");
-        const { data, error } = await supabase
-            .from("profiles")
-            .select("id, username, status");
-
-        if (error) {
-            console.error("❌ Ошибка загрузки:", error);
-            alert("Ошибка загрузки: " + error.message);
-            return;
-        }
-
-        if (!data || data.length === 0) {
-            console.warn("⚠️ Нет пользователей в таблице!");
-            document.getElementById("statuses").innerHTML = "<li>📭 Нет пользователей. Добавьте себя в таблицу Supabase</li>";
-            return;
-        }
-
-        const list = document.getElementById("statuses");
-        list.innerHTML = "";
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 w-full max-w-xl">
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Мой профиль</h2>
+        <p class="text-gray-600 mb-4">Вы зашли как: <span id="current-user" class="font-semibold text-gray-800">Загрузка...</span></p>
         
-        data.forEach(user => {
-            const li = document.createElement("li");
-            
-            // Эмодзи статуса
-            let statusEmoji = "🟢";
-            if (user.status === "away") statusEmoji = "🌙";
-            if (user.status === "dnd") statusEmoji = "⛔";
-            
-            // Текст статуса на русском
-            let statusText = "онлайн";
-            if (user.status === "away") statusText = "отошёл";
-            if (user.status === "dnd") statusText = "не беспокоить";
-            
-            li.textContent = `${user.username} — ${statusEmoji} ${statusText}`;
-            
-            // Подсветка текущего пользователя
-            if (user.id === MY_USER_ID) {
-                li.classList.add("current-user");
-                li.textContent = `👤 ${user.username} (это вы) — ${statusEmoji} ${statusText}`;
+        <div class="grid grid-cols-2 gap-3">
+            <button onclick="changeStatus('📚 Учусь', '#1e9242')" 
+                    class="bg-[#1e9242] hover:opacity-90 text-white font-medium py-3 px-4 rounded-xl shadow-sm border border-black/10 cursor-pointer transition">
+                📚 Учусь
+            </button>
+            <button onclick="changeStatus('☕ Кофе-брейк', '#ffcc00')" 
+                    class="bg-[#ffcc00] hover:opacity-90 text-black font-medium py-3 px-4 rounded-xl shadow-sm border border-black/10 cursor-pointer transition">
+                ☕ Кофе
+            </button>
+            <button onclick="changeStatus('🎮 В игре', '#179cb3')" 
+                    class="bg-[#179cb3] hover:opacity-90 text-white font-medium py-3 px-4 rounded-xl shadow-sm border border-black/10 cursor-pointer transition">
+                🎮 В игре
+            </button>
+            <button onclick="changeStatus('🏠 Дома', '#64748b')" 
+                    class="bg-[#64748b] hover:opacity-90 text-white font-medium py-3 px-4 rounded-xl shadow-sm border border-black/10 cursor-pointer transition">
+                🏠 Дома
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 w-full max-w-xl">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Монитор группы</h2>
+        
+        <div id="group-container" class="space-y-4">
+            <p class="text-gray-400 text-sm">Загрузка пользователей...</p>
+        </div>
+    </div>
+
+    <script type="module">
+        // Импортируем официальный клиент Supabase
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        // Данные подключения к твоей базе данных
+        const URL = 'https://rncerhgizyjhovbdpqnl.supabase.co';
+        const KEY = 'sb_publishable_ThtftS6uBeaKf8FyndIFTg_O0HMJ5yh';
+        const supabase = createClient(URL, KEY);
+
+        // Твой персональный ID записи из таблицы profiles 
+        // ВНИМАНИЕ: Если ты создашь новую строку, замени этот ID на свой!
+        const MY_ID = '4bc5694e-89f8-47d9-9b60-23dbd2439122'; 
+
+        // Функция изменения статуса (привязана к window, чтобы кнопки в HTML её видели)
+        window.changeStatus = async (text, color) => {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ status: text, color: color }) // обновляем статус и цвет в БД
+                .eq('id', MY_ID);
+
+            if (error) {
+                alert("Ошибка! Проверьте RLS политики в Supabase.");
+                console.error(error);
+            } else {
+                fetchGroup(); // Обновляем список на экране после успешного изменения
             }
-            
-            list.appendChild(li);
-        });
-        
-        console.log("✅ Статусы загружены");
-    }
+        };
 
-    // ОБНОВИТЬ СВОЙ СТАТУС
-    async function updateMyStatus() {
-        const newStatus = document.getElementById("statusSelect").value;
-        console.log("📤 Обновление статуса на:", newStatus);
-        
-        const { data, error } = await supabase
-            .from("profiles")
-            .update({ status: newStatus })
-            .eq("id", MY_USER_ID)
-            .select();
+        // Функция получения данных всех пользователей группы
+        async function fetchGroup() {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .order('username', { ascending: true }); // Сортировка по имени по алфавиту
 
-        if (error) {
-            console.error("❌ Ошибка обновления:", error);
-            alert("Ошибка обновления: " + error.message);
-        } else {
-            console.log("✅ Статус обновлён!", data);
-            alert("Статус обновлён!");
-            loadStatuses(); // перезагружаем список
-        }
-    }
+            if (error) {
+                console.error("Ошибка получения данных:", error);
+                return;
+            }
 
-    // ПОДПИСКА НА ИЗМЕНЕНИЯ В РЕАЛЬНОМ ВРЕМЕНИ
-    function subscribeToChanges() {
-        console.log("🔔 Подписка на изменения в реальном времени...");
-        const channel = supabase
-            .channel("profiles-changes")
-            .on(
-                "postgres_changes",
-                { event: "*", schema: "public", table: "profiles" },
-                (payload) => {
-                    console.log("🔄 Получено изменение:", payload);
-                    loadStatuses();
+            const container = document.getElementById('group-container');
+            container.innerHTML = ''; // Очищаем старый список
+
+            // Перебираем всех пользователей и выводим на страницу
+            data.forEach(profile => {
+                // Ищем текущего пользователя, чтобы отобразить его имя в верхней карточке
+                if (profile.id === MY_ID) {
+                    document.getElementById('current-user').innerText = profile.username;
                 }
-            )
-            .subscribe((status) => {
-                console.log("📡 Статус подписки:", status);
-            });
-    }
 
-    // ЗАПУСК ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
-    window.onload = async () => {
-        console.log("🚀 Страница загружена, инициализация...");
-        await checkConnection();
-        await loadStatuses();
-        subscribeToChanges();
-        document.getElementById("updateBtn").onclick = updateMyStatus;
-    };
-</script>
+                // Создаем элемент строки для монитора группы
+                const userRow = document.createElement('div');
+                userRow.className = "flex items-start space-x-3 pt-2 pb-2 border-b border-gray-100 last:border-0";
+                
+                // Наполняем версткой (цветной кружок + имя + статус)
+                userRow.innerHTML = `
+                    <span class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0" style="background-color: ${profile.color || '#ccc'}"></span>
+                    <div>
+                        <div class="font-bold text-gray-950 text-base leading-tight">${profile.username}</div>
+                        <div class="text-sm text-gray-500 mt-0.5">${profile.status || 'Нет статуса'}</div>
+                    </div>
+                `;
+                container.appendChild(userRow);
+            });
+        }
+
+        // Запускаем первичную загрузку данных при открытии страницы
+        fetchGroup();
+    </script>
 </body>
 </html>

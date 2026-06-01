@@ -1,15 +1,99 @@
-HTML
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Облачная практика</title>
+    <meta charset="UTF-8">
+    <title>Монитор статусов</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 600px; margin: 2rem auto; text-align: center; }
+        select, button { padding: 0.5rem 1rem; font-size: 1rem; margin: 1rem; }
+        #statuses { list-style: none; padding: 0; }
+        li { background: #f3f4f6; margin: 0.5rem; padding: 1rem; border-radius: 0.5rem; }
+    </style>
 </head>
 <body>
-<h1>Проект успешно запущен в облаке!</h1>
-<hr>
-<p>Работу выполнил студент: <strong>Диордиев Роман</strong></p>
-<p>Группа: <strong>ПО-3</strong></p>
-<p>Тип облака: <strong>PaaS (GitHub Pages)</strong></p>
+
+<h1>📡 Монитор статусов</h1>
+
+<div>
+    <p>Ваш статус:</p>
+    <select id="statusSelect">
+        <option value="online">🟢 Онлайн</option>
+        <option value="away">🌙 Отошёл</option>
+        <option value="dnd">⛔ Не беспокоить</option>
+    </select>
+    <button id="updateBtn">Обновить статус</button>
+</div>
+
+<h2>👥 Пользователи</h2>
+<ul id="statuses"></ul>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    // ========== ПОДСТАВЬТЕ СВОИ ДАННЫЕ ==========
+    const SUPABASE_URL = "https://ваш_проект.supabase.co";
+    const SUPABASE_ANON_KEY = "ваш_anon_key";
+    const MY_USER_ID = "ваш_uuid_из_таблицы"; // скопировали в части 1.5
+    // ===========================================
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Загрузить всех пользователей
+    async function loadStatuses() {
+        const { data, error } = await supabase
+            .from("profiles")
+            .select("id, username, status");
+
+        if (error) {
+            console.error("Ошибка загрузки:", error);
+            return;
+        }
+
+        const list = document.getElementById("statuses");
+        list.innerHTML = "";
+        data.forEach(user => {
+            const li = document.createElement("li");
+            let statusEmoji = "🟢";
+            if (user.status === "away") statusEmoji = "🌙";
+            if (user.status === "dnd") statusEmoji = "⛔";
+            li.textContent = `${user.username} — ${statusEmoji} ${user.status}`;
+            list.appendChild(li);
+        });
+    }
+
+    // Обновить свой статус
+    async function updateMyStatus() {
+        const newStatus = document.getElementById("statusSelect").value;
+        const { error } = await supabase
+            .from("profiles")
+            .update({ status: newStatus })
+            .eq("id", MY_USER_ID);
+
+        if (error) {
+            alert("Ошибка обновления: " + error.message);
+        } else {
+            alert("Статус обновлён!");
+            loadStatuses(); // перезагружаем список
+        }
+    }
+
+    // Подписка на изменения в реальном времени
+    function subscribeToChanges() {
+        const channel = supabase
+            .channel("profiles-changes")
+            .on(
+                "postgres_changes",
+                { event: "UPDATE", schema: "public", table: "profiles" },
+                () => loadStatuses()  // перезагрузить при любом обновлении
+            )
+            .subscribe();
+    }
+
+    // Запуск
+    window.onload = () => {
+        loadStatuses();
+        subscribeToChanges();
+        document.getElementById("updateBtn").onclick = updateMyStatus;
+    };
+</script>
 </body>
 </html>

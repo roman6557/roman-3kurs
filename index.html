@@ -46,22 +46,18 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        // 1. УКАЗЫВАЕМ ТВОЙ АДРЕС ИЗ СКРИНШОТА
+        // Твои личные данные подключения, которые ты скинул:
         const URL = 'https://pkllhpwpyznbmirhwzec.supabase.co';
-        
-        // 2. ВНИМАНИЕ: Сюда нужно вставить ТВОЙ anon/public ключ!
-        // Зайди в Supabase -> Project Settings (шестеренка внизу слева) -> API -> скопируй anon/public key
-        const KEY = 'ВСТАВЬ_СЮДА_СВОЙ_ANON_KEY'; 
-        
+        const KEY = 'sb_publishable_jh6KIEbCx9RI3QwrVU_EDQ_-ezVsgzC'; 
         const supabase = createClient(URL, KEY);
 
-        // 3. УКАЗЫВАЕМ ТВОЙ ID ИЗ ТАБЛИЦЫ (изменили на твой UUID со скриншота)
+        // Твой персональный ID из таблицы Roman:
         const MY_ID = '9a32646f-c9f4-49a6-8cca-98de1edf1d3d'; 
 
         // Функция изменения статуса
         window.changeStatus = async (text, color) => {
             const { error } = await supabase
-                .from('Roman') // Меняем profiles на имя твоей таблицы Roman
+                .from('Roman') // Имя твоей таблицы из Supabase
                 .update({ status: text, color: color })
                 .eq('id', MY_ID);
 
@@ -73,10 +69,10 @@
             }
         };
 
-        // Функция получения данных
+        // Функция получения данных всех участников
         async function fetchGroup() {
             const { data, error } = await supabase
-                .from('Roman') // Меняем profiles на имя твоей таблицы Roman
+                .from('Roman') // Имя твоей таблицы из Supabase
                 .select('*')
                 .order('username', { ascending: true });
 
@@ -107,6 +103,7 @@
             });
         }
 
+        // Запуск при старте страницы
         fetchGroup();
     </script>
 </body>

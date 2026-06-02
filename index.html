@@ -33,7 +33,6 @@
             box-sizing: border-box;
         }
 
-        /* ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ */
         .user-name {
             font-size: 18px;
             font-weight: 700;
@@ -74,7 +73,6 @@
             margin-bottom: 20px;
         }
 
-        /* КНОПКИ УПРАВЛЕНИЯ */
         .btn-stop {
             width: 100%;
             background-color: #c94a4a;
@@ -105,7 +103,6 @@
         .btn-pause { background-color: #f5c242; color: black; }
         .btn-exit { background-color: #6b7280; color: white; }
 
-        /* МОНИТОР ГРУППЫ */
         .card-title {
             font-size: 15px;
             font-weight: bold;
@@ -130,7 +127,7 @@
             border-radius: 50%;
             display: inline-block;
             margin-right: 10px;
-            background-color: #2ecc71; /* Зеленый онлайн */
+            background-color: #2ecc71;
             box-shadow: 0 0 10px #2ecc71;
             transition: all 0.3s ease;
         }
@@ -158,7 +155,6 @@
         .location { display: block; margin-bottom: 2px; }
         .total-time { color: #3b82f6; font-weight: bold; }
 
-        /* ОБЩИЙ ЧАТ */
         .chat-messages {
             background-color: #f9fafb;
             border: 1px solid #e5e7eb;
@@ -192,7 +188,6 @@
             font-size: 16px;
         }
 
-        /* ТОП СТУДЕНТОВ */
         .top-list {
             display: flex;
             flex-direction: column;
@@ -212,7 +207,6 @@
             font-weight: bold;
         }
 
-        /* ДОСТИЖЕНИЯ */
         .achievements-grid {
             display: flex;
             flex-direction: column;
@@ -332,7 +326,7 @@
         let totalSeconds = 23; 
         let isRunning = true;
         let messageCount = 0;
-        const currentUserId = "roman_user_id_123"; // Временный ID пользователя для тестов
+        const currentUserId = "roman_user_id_123"; 
 
         let achievements = { early: false, marathon: false, activist: false };
 
@@ -347,7 +341,6 @@
         const chatBox = document.getElementById('chat-box');
         const chatCounterElement = document.getElementById('chat-counter');
 
-        // Функции форматирования времени
         function formatTime(seconds) {
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
@@ -361,13 +354,13 @@
             return `${hours}ч ${minutes}м`;
         }
 
-        // ==========================================
-        // ФУНКЦИИ ДЛЯ РАБОТЫ С SUPABASE
-        // ==========================================
+        // =========================================================
+        // ТРЕБУЕМЫЕ ФУНКЦИИ СВЯЗИ С СУПАНБЕЙС (SUPABASE FUNCTIONS)
+        // =========================================================
         async function saveSession(userId, secondsSpent) {
             try {
                 if (typeof supabase === 'undefined') {
-                    console.log(`[Имитация Supabase] Сессия пользователя ${userId} на ${secondsSpent} сек. сохранена.`);
+                    console.log(`[Supabase Имитация] Успешно сохранено: пользователь ${userId} учился ${secondsSpent} секунд.`);
                     return true;
                 }
                 const { data, error } = await supabase
@@ -376,7 +369,7 @@
                 if (error) throw error;
                 return true;
             } catch (error) {
-                console.error('Ошибка Supabase при сохранении сессии:', error.message);
+                console.error('Ошибка Supabase:', error.message);
                 return false;
             }
         }
@@ -384,7 +377,7 @@
         async function updateOnlineStatus(userId, currentStatus) {
             try {
                 if (typeof supabase === 'undefined') {
-                    console.log(`[Имитация Supabase] Статус пользователя ${userId} изменен на: ${currentStatus}`);
+                    console.log(`[Supabase Имитация] Статус пользователя ${userId} изменен на: "${currentStatus}"`);
                     return true;
                 }
                 const { data, error } = await supabase
@@ -394,13 +387,12 @@
                 if (error) throw error;
                 return true;
             } catch (error) {
-                console.error('Ошибка Supabase при обновлении статуса:', error.message);
+                console.error('Ошибка Supabase статуса:', error.message);
                 return false;
             }
         }
-        // ==========================================
+        // =========================================================
 
-        // Функция выдачи достижений
         function unlockAchievement(id, key, name, icon) {
             if (achievements[key]) return;
             achievements[key] = true;
@@ -415,16 +407,16 @@
             myBadgesContainer.appendChild(miniBadge);
 
             setTimeout(() => {
-                alert(`🎉 Отлично, Роман!\nВы получили значок: "${name}" ${icon}`);
+                alert(`🎉 Поздравляем, Роман!\nВы заработали значок: "${name}" ${icon}`);
             }, 100);
         }
 
-        // Проверка: Ранняя пташка
+        // Проверка времени для значка "Ранняя пташка"
         if (new Date().getHours() < 8) {
             unlockAchievement('ach-early', 'early', 'Ранняя пташка', '🌅');
         }
 
-        // Автоматический таймер
+        // Логика ежесекундного таймера
         setInterval(() => {
             if (isRunning) {
                 totalSeconds++;
@@ -438,7 +430,7 @@
             }
         }, 1000);
 
-        // Отправка сообщений в чат
+        // Работа чата
         function sendMessage() {
             const text = chatInput.value.trim();
             if (!text) return;
@@ -460,7 +452,7 @@
         sendBtn.addEventListener('click', sendMessage);
         chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
-        // Интерактивные кнопки управления со статусами базы данных
+        // Интерактивное управление кнопками сессии
         pauseBtn.addEventListener('click', () => {
             if (isRunning) {
                 isRunning = false;
@@ -482,8 +474,8 @@
             updateOnlineStatus(currentUserId, 'offline');
             alert(`Сессия завершена!\nРоман успешно отучился: ${formatTime(totalSeconds)}`);
         });
-        
-        // При запуске устанавливаем статус Онлайн
+
+        // Задаем стартовый статус онлайн при входе
         updateOnlineStatus(currentUserId, 'online');
     </script>
 </body>

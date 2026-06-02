@@ -45,23 +45,23 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
+        // Оригинальные и точные данные твоего проекта Supabase
         const URL = 'https://pkllhpwpyznbmirhwzec.supabase.co';
         const KEY = 'sb_publishable_jh6KIEbCx9RI3QwrVU_EDQ_-ezVsgzC'; 
         const supabase = createClient(URL, KEY);
 
         const MY_ID = '9a32646f-c9f4-49a6-8cca-98de1edf1d3d'; 
 
-      // ФУНКЦИЯ ДЛЯ ВХОДА ЧЕРЕЗ GOOGLE
-window.loginWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            // Явно указываем адрес твоего GitHub Pages для возврата
-            redirectTo: 'https://roman6557.github.io/roman-3kurs/'
-        }
-    });
-    if (error) console.error("Ошибка авторизации:", error.message);
-};
+        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ ВХОДА С УКАЗАНИЕМ REDIRECT
+        window.loginWithGoogle = async () => {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: 'https://roman6557.github.io/roman-3kurs/'
+                }
+            });
+            if (error) console.error("Ошибка авторизации:", error.message);
+        };
 
         // Функция изменения статуса
         window.changeStatus = async (text, color) => {
@@ -78,7 +78,7 @@ window.loginWithGoogle = async () => {
             }
         };
 
-        // Функция получения данных всех участников
+        // Функция получения данных
         async function fetchGroup() {
             const { data, error } = await supabase
                 .from('Roman') 
@@ -112,7 +112,6 @@ window.loginWithGoogle = async () => {
             });
         }
 
-        // Запуск при старте страницы
         fetchGroup();
     </script>
 </body>

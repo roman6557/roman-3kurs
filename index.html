@@ -2,14 +2,19 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Учебная панель</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учебная панель — Роман Диордиев Олегович</title>
 </head>
 <body>
 
     <div class="dashboard-container">
-        
+
         <div class="card">
             <div class="user-name">Роман Диордиев Олегович</div>
+            
+            <div class="user-badges" id="my-badges">
+                </div>
+
             <div class="timer-main">
                 <span>⏱</span> <span id="session-timer">23 сек.</span>
             </div>
@@ -24,7 +29,7 @@
             <div class="card-title">🎥 Монитор группы</div>
             <div class="user-status-row">
                 <div class="user-info-left">
-                    <span class="status-dot" id="user-indicator"></span>
+                    <span class="status-dot status-online" id="user-indicator"></span>
                     <span class="group-user-name">Роман</span>
                 </div>
                 <div class="status-info-right">
@@ -36,13 +41,62 @@
 
         <div class="card">
             <div class="card-title">💬 Общий чат</div>
-            <div class="chat-messages">
-                <p><strong>Роман Диордиев Олегович:</strong> 123</p>
-                <p><strong>Роман Диордиев:</strong> 321</p>
+            <div class="chat-messages" id="chat-box">
+                <p><strong>Ислам Бекишев:</strong> Всем привет! Всем продуктивной учебы!</p>
+                <p><strong>Махаббат Канатова:</strong> Привет! Кто уже закрыл сегодняшнюю цель?</p>
             </div>
             <div class="chat-input-zone">
-                <input type="text" placeholder="Сообщение...">
-                <button class="btn-send">➔</button>
+                <input type="text" id="chat-input" placeholder="Сообщение...">
+                <button class="btn-send" id="send-btn">➔</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🏆 ТОП студентов (Сегодня)</div>
+            <div class="top-list">
+                <div class="top-item">
+                    <span>🥇 Ислам Бекишев</span>
+                    <span class="top-time">16ч 51м</span>
+                </div>
+                <div class="top-item">
+                    <span>🥈 Махаббат Канатова</span>
+                    <span class="top-time">2ч 14м</span>
+                </div>
+                <div class="top-item current-user">
+                    <span>🥉 Роман Диордиев (Вы)</span>
+                    <span class="top-time" id="top-romans-time">0ч 0м</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🏅 Список достижений</div>
+            <div class="achievements-grid">
+                
+                <div class="achievement-item locked" id="ach-early">
+                    <div class="ach-icon">🌅</div>
+                    <div class="ach-info">
+                        <div class="ach-name">Ранняя пташка</div>
+                        <div class="ach-desc">Зайти на платформу до 8:00 утра</div>
+                    </div>
+                </div>
+
+                <div class="achievement-item locked" id="ach-marathon">
+                    <div class="ach-icon">🏃‍♂️</div>
+                    <div class="ach-info">
+                        <div class="ach-name">Марафонец</div>
+                        <div class="ach-desc">Проучиться более 1 минуты за раз (для теста)</div>
+                    </div>
+                </div>
+
+                <div class="achievement-item locked" id="ach-activist">
+                    <div class="ach-icon">⚡</div>
+                    <div class="ach-info">
+                        <div class="ach-name">Активист</div>
+                        <div class="ach-desc">Написать 5 сообщений в чат (<span id="chat-counter">0</span>/5)</div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -50,97 +104,169 @@
 
 </body>
 </html>
-<style>
-    /* Настраиваем фон всей страницы */
-    body {
-        background-color: #f4f6f9;
-        font-family: sans-serif;
-        display: flex;
-        justify-content: center;
-        padding: 20px;
-    }
+/* Дополнительные стили к уже имеющимся */
 
-    /* Ограничиваем ширину панели, как на телефоне или в сайдбаре */
-    .dashboard-container {
-        width: 100%;
-        max-width: 400px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
+body {
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    margin: 0;
+}
 
-    /* Белые закругленные карточки */
-    .card {
-        background: #ffffff;
-        border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
+.dashboard-container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
 
-    .user-name { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 15px; }
-    .timer-main { text-align: center; font-size: 24px; font-weight: bold; color: #3b82f6; margin-bottom: 20px; }
-    
-    /* Стили кнопок */
-    .btn-stop { width: 100%; background: #c94a4a; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-    .btn-group { display: flex; gap: 10px; }
-    .btn-pause { flex: 1; background: #f5c242; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-    .btn-exit { flex: 1; background: #6b7280; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+.card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+}
 
-    /* Настройки монитора группы */
-    .card-title { font-size: 15px; font-weight: bold; margin-bottom: 15px; }
-    .user-status-row { display: flex; justify-content: space-between; align-items: center; }
-    .user-info-left { display: flex; align-items: center; }
+.card-title {
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
 
-    /* ============================================== */
-    /* ЭТО НАШ ИНДИКАТОР ОНЛАЙН (КРУЖОК)              */
-    /* ============================================== */
-    .status-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 10px;
-        background-color: #2ecc71; /* По умолчанию ЗЕЛЕНЫЙ (Онлайн) */
-        box-shadow: 0 0 8px #2ecc71; /* Свечение зеленого */
-        transition: all 0.3s ease;
-    }
+/* Стили для маленьких значков в профиле */
+.user-badges {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
 
-    /* Класс для паузы (желтый) */
-    .status-pause {
-        background-color: #f5c242 !important;
-        box-shadow: 0 0 8px #f5c242 !important;
-    }
+.badge-mini {
+    padding: 4px 8px;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    animation: popIn 0.3s ease-out forward;
+}
 
-    /* Класс для офлайна (серый) */
-    .status-offline {
-        background-color: #9ca3af !important;
-        box-shadow: none !important;
-    }
-    /* ============================================== */
+@keyframes popIn {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+}
 
-    .group-user-name { font-weight: 600; }
-    .status-info-right { text-align: right; font-size: 12px; color: #6b7280; }
-    .total-time { color: #3b82f6; font-weight: bold; }
+/* Стили для блока ТОП Студентов */
+.top-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
-    /* Стили простенького чата */
-    .chat-messages { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; height: 100px; overflow-y: auto; margin-bottom: 10px; font-size: 14px; }
-    .chat-input-zone { display: flex; gap: 8px; }
-    .chat-input-zone input { flex: 1; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; }
-    .btn-send { background: #52c41a; color: white; border: none; width: 40px; border-radius: 8px; cursor: pointer; }
-</style>
+.top-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.current-user {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    font-weight: bold;
+}
+
+.top-time {
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+/* Стили системы достижений */
+.achievements-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+/* Состояние заблокированной ачивки */
+.achievement-item.locked {
+    opacity: 0.5;
+    background: #f3f4f6;
+    filter: grayscale(1);
+}
+
+/* Состояние разблокированной ачивки */
+.achievement-item.unlocked {
+    opacity: 1;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    filter: grayscale(0);
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.1);
+}
+
+.ach-icon {
+    font-size: 24px;
+}
+
+.ach-name {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.ach-desc {
+    font-size: 11px;
+    color: #6b7280;
+}
 <script>
-    // 1. Создаем переменные для хранения состояния
-    let totalSeconds = 23; // Стартовое время (23 секунды)
-    let isRunning = true;  // Флаг: работает ли таймер сейчас?
+    // Исходные данные таймера
+    let totalSeconds = 23; 
+    let isRunning = true;
+    let messageCount = 0; // Счетчик отправленных Романом сообщений
 
-    // 2. Находим элементы на странице, чтобы управлять ими из кода
+    // Объект для отслеживания выданных достижений (чтобы не выдавать дважды)
+    let unlockedAchievements = {
+        early: false,
+        marathon: false,
+        activist: false
+    };
+
+    // Элементы со страницы
     const sessionTimerElement = document.getElementById('session-timer');
     const totalTimeElement = document.getElementById('total-study-time');
+    const topRomansTimeElement = document.getElementById('top-romans-time');
     const userIndicator = document.getElementById('user-indicator');
     const pauseBtn = document.getElementById('pause-btn');
-    const stopBtn = document.getElementById('stop-btn');
+    const myBadgesContainer = document.getElementById('my-badges');
 
-    // 3. Функция, которая превращает секунды в формат "0ч 0м 23с"
+    // Чат элементы
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const chatBox = document.getElementById('chat-box');
+    const chatCounterElement = document.getElementById('chat-counter');
+
+    // Форматирование времени в "0ч 0м 23с"
     function formatTime(seconds) {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
@@ -148,43 +274,111 @@
         return `${hours}ч ${minutes}м ${secs}с`;
     }
 
-    // 4. Запускаем автоматический таймер. Он срабатывает каждые 1000 миллисекунд (1 секунда)
+    // Сокращенное форматирование для Таблицы лидеров ("0ч 0м")
+    function formatTopTime(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        return `${hours}ч ${minutes}м`;
+    }
+
+    // Функция активации (разблокировки) достижения
+    function unlockAchievement(id, key, name, icon) {
+        if (unlockedAchievements[key]) return; // Если уже открыто, выходим
+        unlockedAchievements[key] = true;
+
+        // 1. Анимируем карточку в списке достижений
+        const achCard = document.getElementById(id);
+        achCard.classList.remove('locked');
+        achCard.classList.add('unlocked');
+
+        // 2. Добавляем красивую мини-плашку значка в профиль Романа
+        const miniBadge = document.createElement('div');
+        miniBadge.className = 'badge-mini';
+        miniBadge.innerHTML = `<span>${icon}</span> ${name}`;
+        myBadgesContainer.appendChild(miniBadge);
+
+        // 3. Звуковое/визуальное уведомление
+        setTimeout(() => {
+            alert(`🎉 Поздравляем, Роман!\nВы заслужили награду: "${name}" ${icon}`);
+        }, 100);
+    }
+
+    // --- ПРОВЕРКА 1: РАННЯЯ ПТАШКА (срабатывает при загрузке) ---
+    function checkEarlyBird() {
+        const currentHour = new Date().getHours();
+        if (currentHour < 8) {
+            unlockAchievement('ach-early', 'early', 'Ранняя пташка', '🌅');
+        }
+    }
+    checkEarlyBird(); // Запуск проверки
+
+    // --- ТАЙМЕРЫ И ОБНОВЛЕНИЕ РЕЙТИНГА ---
     const timerInterval = setInterval(() => {
-        if (isRunning) { // Если учеба идет (не на паузе)
-            totalSeconds++; // Увеличиваем время на 1 секунду
+        if (isRunning) {
+            totalSeconds++;
             
-            // Обновляем текст в верхней карточке
+            // Обновляем таймеры на панелях
             sessionTimerElement.textContent = `${totalSeconds} сек.`;
-            
-            // Обновляем текст в нижней карточке (В учебе)
             totalTimeElement.textContent = formatTime(totalSeconds);
+            
+            // В реальном времени обновляем позицию Романа в ТОПе студентов!
+            topRomansTimeElement.textContent = formatTopTime(totalSeconds);
+
+            // --- ПРОВЕРКА 2: МАРАФОНЕЦ (60 сек для быстрого теста) ---
+            if (totalSeconds >= 60) {
+                unlockAchievement('ach-marathon', 'marathon', 'Марафонец', '🏃‍♂️');
+            }
         }
     }, 1000);
 
-    // 5. Логика для кнопки "Перерыв"
+    // --- РАБОТА ЧАТА И ПРОВЕРКА НА АКТИВИСТА ---
+    function sendMessage() {
+        const text = chatInput.value.trim();
+        if (text === "") return;
+
+        // Добавляем сообщение Романа в окно чата
+        const messagePara = document.createElement('p');
+        messagePara.innerHTML = `<strong>Роман Диордиев Олегович:</strong> ${text}`;
+        chatBox.appendChild(messagePara);
+        
+        // Скроллим чат вниз
+        chatBox.scrollTop = chatBox.scrollHeight;
+        chatInput.value = ""; // Очищаем инпут
+
+        // Инкрементируем счетчик сообщений
+        messageCount++;
+        if (messageCount <= 5) {
+            chatCounterElement.textContent = messageCount;
+        }
+
+        // --- ПРОВЕРКА 3: АКТИВИСТ (требуется 5 сообщений) ---
+        if (messageCount >= 5) {
+            unlockAchievement('ach-activist', 'activist', 'Активист', '⚡');
+        }
+    }
+
+    // Отправка по кнопке и по Enter
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    // Управление паузой и остановкой сессии
     pauseBtn.addEventListener('click', () => {
         if (isRunning) {
-            // Если таймер шел — ставим на паузу
             isRunning = false;
             pauseBtn.innerHTML = '▶ Продолжить';
-            // Добавляем класс status-pause (кружок станет желтым)
-            userIndicator.classList.add('status-pause');
+            userIndicator.className = 'status-dot status-pause';
         } else {
-            // Если был на паузе — запускаем снова
             isRunning = true;
             pauseBtn.innerHTML = '☕ Перерыв';
-            // Убираем желтый класс (кружок снова станет зеленым)
-            userIndicator.classList.remove('status-pause');
+            userIndicator.className = 'status-dot status-online';
         }
     });
 
-    // 6. Логика для кнопки "Завершить сессию"
-    stopBtn.addEventListener('click', () => {
-        isRunning = false; // Останавливаем счетчик
-        // Добавляем класс status-offline (кружок станет серым)
+    document.getElementById('stop-btn').addEventListener('click', () => {
+        isRunning = false;
         userIndicator.className = 'status-dot status-offline';
-        
-        // Показываем уведомление на экране с итоговым результатом Романа
-        alert(`Сессия завершена!\nРоман Диордиев Олегович успешно отучился: ${formatTime(totalSeconds)}`);
+        alert(`Сессия завершена! Итог Романа: ${formatTime(totalSeconds)}`);
     });
 </script>

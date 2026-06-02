@@ -3,116 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Монитор статусов</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Учебная панель — Роман Диордиев Олегович</title>
     <style>
-        body { font-family: system-ui, -apple-system, sans-serif; }
-    </style>
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4 space-y-6">
-
-    <div class="w-full max-w-xl flex justify-end">
-        <button onclick="loginWithGoogle()" class="flex items-center space-x-2 bg-white hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-xl shadow-sm border border-gray-200 cursor-pointer transition">
-            <svg class="w-5 h-5" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-            </svg>
-            <span>Войти через Google</span>
-        </button>
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 w-full max-w-xl">
-        <h2 class="text-xl font-bold text-gray-900 mb-2">Мой профиль</h2>
-        <p class="text-gray-600 mb-4">Вы зашли как: <span id="current-user" class="font-semibold text-gray-800">Загрузка...</span></p>
-        
-        <div class="grid grid-cols-2 gap-3">
-            <button onclick="changeStatus('📚 Учусь', '#1e9242')" class="bg-[#1e9242] hover:opacity-90 text-white font-medium py-3 px-4 rounded-xl shadow-sm border border-black/10 cursor-pointer transition">📚 Учусь</button>
-            <button onclick="changeStatus('☕ Кофе-брейк', '#ffcc00')" class="bg-[#ffcc00] hover:opacity-90 text-black font-medium py-3 px-4 rounded-xl shadow-sm border border-black/10 cursor-pointer transition">☕ Кофе</button>
-            <button onclick="changeStatus('🎮 В игре', '#179cb3')" class="bg-[#179cb3] hover:opacity-90 text-white font-medium py-3 px-4 rounded-xl shadow-sm border border-black/10 cursor-pointer transition">🎮 В игре</button>
-            <button onclick="changeStatus('🏠 Дома', '#64748b')" class="bg-[#64748b] hover:opacity-90 text-white font-medium py-3 px-4 rounded-xl shadow-sm border border-black/10 cursor-pointer transition">🏠 Дома</button>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 w-full max-w-xl">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Монитор группы</h2>
-        <div id="group-container" class="space-y-4">
-            <p class="text-gray-400 text-sm">Загрузка пользователей...</p>
-        </div>
-    </div>
-
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-        // Оригинальные и точные данные твоего проекта Supabase
-        const URL = 'https://pkllhpwpyznbmirhwzec.supabase.co';
-        const KEY = 'sb_publishable_jh6KIEbCx9RI3QwrVU_EDQ_-ezVsgzC'; 
-        const supabase = createClient(URL, KEY);
-
-        const MY_ID = '9a32646f-c9f4-49a6-8cca-98de1edf1d3d'; 
-
-        // ИСПРАВЛЕННАЯ ФУНКЦИЯ ДЛЯ ВХОДА С УКАЗАНИЕМ REDIRECT
-        window.loginWithGoogle = async () => {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: 'https://roman6557.github.io/roman-3kurs/'
-                }
-            });
-            if (error) console.error("Ошибка авторизации:", error.message);
-        };
-
-        // Функция изменения статуса
-        window.changeStatus = async (text, color) => {
-            const { error } = await supabase
-                .from('Roman') 
-                .update({ status: text, color: color })
-                .eq('id', MY_ID);
-
-            if (error) {
-                alert("Ошибка! Проверьте RLS политики в Supabase.");
-                console.error(error);
-            } else {
-                fetchGroup(); 
-            }
-        };
-
-        // Функция получения данных
-        async function fetchGroup() {
-            const { data, error } = await supabase
-                .from('Roman') 
-                .select('*')
-                .order('username', { ascending: true });
-
-            if (error) {
-                console.error("Ошибка получения данных:", error);
-                return;
-            }
-
-            const container = document.getElementById('group-container');
-            container.innerHTML = ''; 
-
-            data.forEach(profile => {
-                if (profile.id === MY_ID) {
-                    document.getElementById('current-user').innerText = profile.username;
-                }
-
-                const userRow = document.createElement('div');
-                userRow.className = "flex items-start space-x-3 pt-2 pb-2 border-b border-gray-100 last:border-0";
-                
-                userRow.innerHTML = `
-                    <span class="w-2.5 h-2.5 rounded-full mt-1.5 shrink-0" style="background-color: ${profile.color || '#ccc'}"></span>
-                    <div>
-                        <div class="font-bold text-gray-950 text-base leading-tight">${profile.username}</div>
-                        <div class="text-sm text-gray-500 mt-0.5">${profile.status || 'Нет статуса'}</div>
-                    </div>
-                `;
-                container.appendChild(userRow);
-            });
+        /* Общие стили для заднего фона как на скриншоте */
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
 
-        fetchGroup();
+        /* Контейнер для всей панели */
+        .dashboard-container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Общий стиль для всех белых карточек */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+        }
+
+        /* --- БЛОК ПРОФИЛЯ --- */
+        .user-name {
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #000000;
+        }
+
+        .timer-main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #3b82f6;
+            margin-bottom: 20px;
+        }
+
+        .btn-stop {
+            width: 100%;
+            background-color: #c94a4a;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+        .btn-stop:hover { background-color: #b03e3e; }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-pause {
+            flex: 1;
+            background-color: #f5c242;
+            color: black;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-pause:hover { background-color: #e0b034; }
+
+        .btn-exit {
+            flex: 1;
+            background-color: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-exit:hover { background-color: #555b66; }
+
+
+        /* --- БЛОК МОНИТОРА --- */
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .user-status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info-left {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Динамический индикатор онлайн */
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            background-color: #9ca3af; /* Серый (офлайн) */
+            margin-right: 10px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        /* Когда активен (Онлайн) */
+        .status-online {
+            background-color: #2ecc71;
+            box-shadow: 0 0 8px #2ecc71;
+        }
+        /* Когда на перерыве */
+        .status-pause {
+            background-color: #f5c242;
+            box-shadow: 0 0 8px #f5c242;
+        }
+
+        .group-user-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .status-info-right {
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .location { display: block; margin-bottom: 2px; }
+        .total-time { color: #3b82f6; font-weight: 500; }
+
+
+        /* --- БЛОК ЧАТА --- */
+        .chat-messages {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            height: 120px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .chat-messages p { margin: 0 0 8px 0; }
+
+        .chat-input-zone {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input-zone input {
+            flex: 1;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 10px;
+            outline: none;
+            font-size: 14px;
+        }
+        .btn-send {
+            background-color: #52c41a;
+            color: white;
+            border: none;
+            width: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-send:hover { background-color: #40a9ff; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <div class="card">
+            <div class="user-name">Роман Диордиев Олегович</div>
+            <div class="timer-main">
+                <span>⏱</span> <span id="session-timer">23 сек.</span>
+            </div>
+            <button class="btn-stop" id="stop-btn">⛔ Завершить сессию</button>
+            <div class="btn-group">
+                <button class="btn-pause" id="pause-btn">☕ Перерыв</button>
+                <button class="btn-exit" onclick="location.reload()">Выход</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🎥 Монитор группы</div>
+            <div class="user-status-row">
+                <div class="user-info-left">
+                    <span class="status-dot status-online" id="user-indicator"></span>
+                    <span class="group-user-name">Роман</span>
+                </div>
+                
+                <div class="status-info-right">
+                    <span class="location">🏠 Дома</span>
+                    <span class="total-time">⏱ <span id="total-study-time">0ч 0м 23с</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">💬 Общий чат</div>
+            <div class="chat-messages">
+                <p><strong>Роман Диордиев Олегович:</strong> 123</p>
+                <p><strong>Роман Диордиев:</strong> 321</p>
+            </div>
+            <div class="chat-input-zone">
+                <input type="text" placeholder="Сообщение...">
+                <button class="btn-send">➔</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Стартуем с 23 секунд, как на вашем макете
+        let totalSeconds = 23; 
+        let isRunning = true; // По умолчанию учеба активна
+
+        const sessionTimerElement = document.getElementById('session-timer');
+        const totalTimeElement = document.getElementById('total-study-time');
+        const userIndicator = document.getElementById('user-indicator');
+        const pauseBtn = document.getElementById('pause-btn');
+
+        // Функция перевода секунд в формат "0ч 0м 23с"
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hours}ч ${minutes}м ${secs}с`;
+        }
+
+        // Запуск интервала: тикает каждую секунду
+        const timerInterval = setInterval(() => {
+            if (isRunning) {
+                totalSeconds++;
+                // Обновляем верхнее время
+                sessionTimerElement.textContent = `${totalSeconds} сек.`;
+                // Синхронно обновляем нижнее время "В учебе" в мониторе группы
+                totalTimeElement.textContent = formatTime(totalSeconds);
+            }
+        }, 1000);
+
+        // Обработка кнопки "Перерыв"
+        pauseBtn.addEventListener('click', () => {
+            if (isRunning) {
+                isRunning = false;
+                pauseBtn.innerHTML = '▶ Продолжить';
+                // Меняем индикатор Романа на Желтый (Перерыв)
+                userIndicator.className = 'status-dot status-pause';
+            } else {
+                isRunning = true;
+                pauseBtn.innerHTML = '☕ Перерыв';
+                // Возвращаем Зеленый индикатор (Онлайн)
+                userIndicator.className = 'status-dot status-online';
+            }
+        });
+
+        // Обработка кнопки "Завершить сессию"
+        document.getElementById('stop-btn').addEventListener('click', () => {
+            isRunning = false;
+            // Тушим индикатор в Серый цвет (Офлайн)
+            userIndicator.className = 'status-dot';
+            alert(`Сессия успешно завершена! Роман Диордиев Олегович отучился: ${formatTime(totalSeconds)}`);
+        });
     </script>
 </body>
 </html>

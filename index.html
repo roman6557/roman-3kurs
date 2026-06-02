@@ -2,208 +2,12 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Учебная панель — Роман Диордиев Олегович</title>
-    <style>
-        /* Общие стили для заднего фона как на скриншоте */
-        body {
-            background-color: #f4f6f9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-
-        /* Контейнер для всей панели */
-        .dashboard-container {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        /* Общий стиль для всех белых карточек */
-        .card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            box-sizing: border-box;
-        }
-
-        /* --- БЛОК ПРОФИЛЯ --- */
-        .user-name {
-            font-size: 18px;
-            font-weight: 700;
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 15px;
-            color: #000000;
-        }
-
-        .timer-main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #3b82f6;
-            margin-bottom: 20px;
-        }
-
-        .btn-stop {
-            width: 100%;
-            background-color: #c94a4a;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            margin-bottom: 10px;
-            transition: background 0.2s;
-        }
-        .btn-stop:hover { background-color: #b03e3e; }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-pause {
-            flex: 1;
-            background-color: #f5c242;
-            color: black;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .btn-pause:hover { background-color: #e0b034; }
-
-        .btn-exit {
-            flex: 1;
-            background-color: #6b7280;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .btn-exit:hover { background-color: #555b66; }
-
-
-        /* --- БЛОК МОНИТОРА --- */
-        .card-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 15px;
-            font-weight: bold;
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-
-        .user-status-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-info-left {
-            display: flex;
-            align-items: center;
-        }
-
-        /* Динамический индикатор онлайн */
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            background-color: #9ca3af; /* Серый (офлайн) */
-            margin-right: 10px;
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-        /* Когда активен (Онлайн) */
-        .status-online {
-            background-color: #2ecc71;
-            box-shadow: 0 0 8px #2ecc71;
-        }
-        /* Когда на перерыве */
-        .status-pause {
-            background-color: #f5c242;
-            box-shadow: 0 0 8px #f5c242;
-        }
-
-        .group-user-name {
-            font-weight: 600;
-            font-size: 15px;
-        }
-
-        .status-info-right {
-            text-align: right;
-            font-size: 12px;
-            color: #6b7280;
-        }
-        .location { display: block; margin-bottom: 2px; }
-        .total-time { color: #3b82f6; font-weight: 500; }
-
-
-        /* --- БЛОК ЧАТА --- */
-        .chat-messages {
-            background-color: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 12px;
-            height: 120px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-        .chat-messages p { margin: 0 0 8px 0; }
-
-        .chat-input-zone {
-            display: flex;
-            gap: 8px;
-        }
-        .chat-input-zone input {
-            flex: 1;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 10px;
-            outline: none;
-            font-size: 14px;
-        }
-        .btn-send {
-            background-color: #52c41a;
-            color: white;
-            border: none;
-            width: 40px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .btn-send:hover { background-color: #40a9ff; }
-    </style>
+    <title>Учебная панель</title>
 </head>
 <body>
 
     <div class="dashboard-container">
-
+        
         <div class="card">
             <div class="user-name">Роман Диордиев Олегович</div>
             <div class="timer-main">
@@ -220,10 +24,9 @@
             <div class="card-title">🎥 Монитор группы</div>
             <div class="user-status-row">
                 <div class="user-info-left">
-                    <span class="status-dot status-online" id="user-indicator"></span>
+                    <span class="status-dot" id="user-indicator"></span>
                     <span class="group-user-name">Роман</span>
                 </div>
-                
                 <div class="status-info-right">
                     <span class="location">🏠 Дома</span>
                     <span class="total-time">⏱ <span id="total-study-time">0ч 0м 23с</span></span>
@@ -245,57 +48,143 @@
 
     </div>
 
-    <script>
-        // Стартуем с 23 секунд, как на вашем макете
-        let totalSeconds = 23; 
-        let isRunning = true; // По умолчанию учеба активна
-
-        const sessionTimerElement = document.getElementById('session-timer');
-        const totalTimeElement = document.getElementById('total-study-time');
-        const userIndicator = document.getElementById('user-indicator');
-        const pauseBtn = document.getElementById('pause-btn');
-
-        // Функция перевода секунд в формат "0ч 0м 23с"
-        function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            return `${hours}ч ${minutes}м ${secs}с`;
-        }
-
-        // Запуск интервала: тикает каждую секунду
-        const timerInterval = setInterval(() => {
-            if (isRunning) {
-                totalSeconds++;
-                // Обновляем верхнее время
-                sessionTimerElement.textContent = `${totalSeconds} сек.`;
-                // Синхронно обновляем нижнее время "В учебе" в мониторе группы
-                totalTimeElement.textContent = formatTime(totalSeconds);
-            }
-        }, 1000);
-
-        // Обработка кнопки "Перерыв"
-        pauseBtn.addEventListener('click', () => {
-            if (isRunning) {
-                isRunning = false;
-                pauseBtn.innerHTML = '▶ Продолжить';
-                // Меняем индикатор Романа на Желтый (Перерыв)
-                userIndicator.className = 'status-dot status-pause';
-            } else {
-                isRunning = true;
-                pauseBtn.innerHTML = '☕ Перерыв';
-                // Возвращаем Зеленый индикатор (Онлайн)
-                userIndicator.className = 'status-dot status-online';
-            }
-        });
-
-        // Обработка кнопки "Завершить сессию"
-        document.getElementById('stop-btn').addEventListener('click', () => {
-            isRunning = false;
-            // Тушим индикатор в Серый цвет (Офлайн)
-            userIndicator.className = 'status-dot';
-            alert(`Сессия успешно завершена! Роман Диордиев Олегович отучился: ${formatTime(totalSeconds)}`);
-        });
-    </script>
 </body>
 </html>
+<style>
+    /* Настраиваем фон всей страницы */
+    body {
+        background-color: #f4f6f9;
+        font-family: sans-serif;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    /* Ограничиваем ширину панели, как на телефоне или в сайдбаре */
+    .dashboard-container {
+        width: 100%;
+        max-width: 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Белые закругленные карточки */
+    .card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .user-name { font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 15px; }
+    .timer-main { text-align: center; font-size: 24px; font-weight: bold; color: #3b82f6; margin-bottom: 20px; }
+    
+    /* Стили кнопок */
+    .btn-stop { width: 100%; background: #c94a4a; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+    .btn-group { display: flex; gap: 10px; }
+    .btn-pause { flex: 1; background: #f5c242; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+    .btn-exit { flex: 1; background: #6b7280; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
+    /* Настройки монитора группы */
+    .card-title { font-size: 15px; font-weight: bold; margin-bottom: 15px; }
+    .user-status-row { display: flex; justify-content: space-between; align-items: center; }
+    .user-info-left { display: flex; align-items: center; }
+
+    /* ============================================== */
+    /* ЭТО НАШ ИНДИКАТОР ОНЛАЙН (КРУЖОК)              */
+    /* ============================================== */
+    .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 10px;
+        background-color: #2ecc71; /* По умолчанию ЗЕЛЕНЫЙ (Онлайн) */
+        box-shadow: 0 0 8px #2ecc71; /* Свечение зеленого */
+        transition: all 0.3s ease;
+    }
+
+    /* Класс для паузы (желтый) */
+    .status-pause {
+        background-color: #f5c242 !important;
+        box-shadow: 0 0 8px #f5c242 !important;
+    }
+
+    /* Класс для офлайна (серый) */
+    .status-offline {
+        background-color: #9ca3af !important;
+        box-shadow: none !important;
+    }
+    /* ============================================== */
+
+    .group-user-name { font-weight: 600; }
+    .status-info-right { text-align: right; font-size: 12px; color: #6b7280; }
+    .total-time { color: #3b82f6; font-weight: bold; }
+
+    /* Стили простенького чата */
+    .chat-messages { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; height: 100px; overflow-y: auto; margin-bottom: 10px; font-size: 14px; }
+    .chat-input-zone { display: flex; gap: 8px; }
+    .chat-input-zone input { flex: 1; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; }
+    .btn-send { background: #52c41a; color: white; border: none; width: 40px; border-radius: 8px; cursor: pointer; }
+</style>
+<script>
+    // 1. Создаем переменные для хранения состояния
+    let totalSeconds = 23; // Стартовое время (23 секунды)
+    let isRunning = true;  // Флаг: работает ли таймер сейчас?
+
+    // 2. Находим элементы на странице, чтобы управлять ими из кода
+    const sessionTimerElement = document.getElementById('session-timer');
+    const totalTimeElement = document.getElementById('total-study-time');
+    const userIndicator = document.getElementById('user-indicator');
+    const pauseBtn = document.getElementById('pause-btn');
+    const stopBtn = document.getElementById('stop-btn');
+
+    // 3. Функция, которая превращает секунды в формат "0ч 0м 23с"
+    function formatTime(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        return `${hours}ч ${minutes}м ${secs}с`;
+    }
+
+    // 4. Запускаем автоматический таймер. Он срабатывает каждые 1000 миллисекунд (1 секунда)
+    const timerInterval = setInterval(() => {
+        if (isRunning) { // Если учеба идет (не на паузе)
+            totalSeconds++; // Увеличиваем время на 1 секунду
+            
+            // Обновляем текст в верхней карточке
+            sessionTimerElement.textContent = `${totalSeconds} сек.`;
+            
+            // Обновляем текст в нижней карточке (В учебе)
+            totalTimeElement.textContent = formatTime(totalSeconds);
+        }
+    }, 1000);
+
+    // 5. Логика для кнопки "Перерыв"
+    pauseBtn.addEventListener('click', () => {
+        if (isRunning) {
+            // Если таймер шел — ставим на паузу
+            isRunning = false;
+            pauseBtn.innerHTML = '▶ Продолжить';
+            // Добавляем класс status-pause (кружок станет желтым)
+            userIndicator.classList.add('status-pause');
+        } else {
+            // Если был на паузе — запускаем снова
+            isRunning = true;
+            pauseBtn.innerHTML = '☕ Перерыв';
+            // Убираем желтый класс (кружок снова станет зеленым)
+            userIndicator.classList.remove('status-pause');
+        }
+    });
+
+    // 6. Логика для кнопки "Завершить сессию"
+    stopBtn.addEventListener('click', () => {
+        isRunning = false; // Останавливаем счетчик
+        // Добавляем класс status-offline (кружок станет серым)
+        userIndicator.className = 'status-dot status-offline';
+        
+        // Показываем уведомление на экране с итоговым результатом Романа
+        alert(`Сессия завершена!\nРоман Диордиев Олегович успешно отучился: ${formatTime(totalSeconds)}`);
+    });
+</script>

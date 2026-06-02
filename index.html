@@ -1,441 +1,56 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Учебная панель — Роман Диордиев Олегович</title>
-    
-    <style>
-        body {
-            background-color: #f4f6f9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
+// Предполагается, что объект supabase уже инициализирован в вашем проекте:
+// const supabase = supabase.createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
 
-        .dashboard-container {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            box-sizing: border-box;
-        }
-
-        /* ПРОФИЛЬ */
-        .user-name {
-            font-size: 18px;
-            font-weight: 700;
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #000000;
-        }
-
-        .user-badges {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-
-        .badge-mini {
-            padding: 4px 8px;
-            background: #e0f2fe;
-            color: #0369a1;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .timer-main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #3b82f6;
-            margin-bottom: 20px;
-        }
-
-        /* КНОПКИ */
-        .btn-stop {
-            width: 100%;
-            background-color: #c94a4a;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-pause, .btn-exit {
-            flex: 1;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .btn-pause { background-color: #f5c242; color: black; }
-        .btn-exit { background-color: #6b7280; color: white; }
-
-        /* МОНИТОР ГРУППЫ */
-        .card-title {
-            font-size: 15px;
-            font-weight: bold;
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-
-        .user-status-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-info-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
-            background-color: #2ecc71; /* Зеленый онлайн */
-            box-shadow: 0 0 10px #2ecc71;
-            transition: all 0.3s ease;
-        }
-
-        .status-pause {
-            background-color: #f5c242 !important;
-            box-shadow: 0 0 10px #f5c242 !important;
-        }
-
-        .status-offline {
-            background-color: #9ca3af !important;
-            box-shadow: none !important;
-        }
-
-        .group-user-name {
-            font-weight: 600;
-            font-size: 15px;
-        }
-
-        .status-info-right {
-            text-align: right;
-            font-size: 12px;
-            color: #6b7280;
-        }
-        .location { display: block; margin-bottom: 2px; }
-        .total-time { color: #3b82f6; font-weight: bold; }
-
-        /* ЧАТ */
-        .chat-messages {
-            background-color: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 12px;
-            height: 110px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-            font-size: 13px;
-        }
-        .chat-messages p { margin: 0 0 6px 0; }
-
-        .chat-input-zone {
-            display: flex;
-            gap: 8px;
-        }
-        .chat-input-zone input {
-            flex: 1;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 10px;
-            outline: none;
-        }
-        .btn-send {
-            background-color: #52c41a;
-            color: white;
-            border: none;
-            width: 40px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        /* ТОП СТУДЕНТОВ */
-        .top-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .top-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 12px;
-            background: #f9fafb;
-            border-radius: 8px;
-            font-size: 13px;
-        }
-        .current-user {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            font-weight: bold;
-        }
-
-        /* ДОСТИЖЕНИЯ */
-        .achievements-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .achievement-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px;
-            border-radius: 10px;
-            background: #fff;
-            border: 1px solid #e5e7eb;
-        }
-        .achievement-item.locked {
-            opacity: 0.4;
-            background: #f3f4f6;
-            filter: grayscale(1);
-        }
-        .achievement-item.unlocked {
-            opacity: 1;
-            background: #f0fdf4;
-            border-color: #bbf7d0;
-            filter: grayscale(0);
-        }
-        .ach-icon { font-size: 22px; }
-        .ach-name { font-size: 13px; font-weight: bold; }
-        .ach-desc { font-size: 11px; color: #6b7280; }
-    </style>
-</head>
-<body>
-
-    <div class="dashboard-container">
-
-        <div class="card">
-            <div class="user-name">Роман Диордиев Олегович</div>
-            <div class="user-badges" id="my-badges"></div>
-            <div class="timer-main">
-                <span>⏱</span> <span id="session-timer">23 сек.</span>
-            </div>
-            <button class="btn-stop" id="stop-btn">⛔ Завершить сессию</button>
-            <div class="btn-group">
-                <button class="btn-pause" id="pause-btn">☕ Перерыв</button>
-                <button class="btn-exit" onclick="location.reload()">Выход</button>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">🎥 Монитор группы</div>
-            <div class="user-status-row">
-                <div class="user-info-left">
-                    <span class="status-dot" id="user-indicator"></span>
-                    <span class="group-user-name">Роман</span>
-                </div>
-                <div class="status-info-right">
-                    <span class="location">🏠 Дома</span>
-                    <span class="total-time">⏱ <span id="total-study-time">0ч 0м 23с</span></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">💬 Общий чат</div>
-            <div class="chat-messages" id="chat-box">
-                <p><strong>Ислам Бекишев:</strong> Всем продуктивной учебы сегодня!</p>
-            </div>
-            <div class="chat-input-zone">
-                <input type="text" id="chat-input" placeholder="Сообщение...">
-                <button class="btn-send" id="send-btn">➔</button>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">🏆 ТОП студентов (Сегодня)</div>
-            <div class="top-list">
-                <div class="top-item">
-                    <span>🥇 Ислам Бекишев</span>
-                    <span class="total-time">16ч 51м</span>
-                </div>
-                <div class="top-item current-user">
-                    <span>🥈 Роман Диордиев (Вы)</span>
-                    <span class="total-time" id="top-romans-time">0ч 0м</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">🏅 Список достижений</div>
-            <div class="achievements-grid">
-                <div class="achievement-item locked" id="ach-early">
-                    <div class="ach-icon">🌅</div>
-                    <div>
-                        <div class="ach-name">Ранняя пташка</div>
-                        <div class="ach-desc">Зайти на платформу до 8:00 утра</div>
-                    </div>
-                </div>
-                <div class="achievement-item locked" id="ach-marathon">
-                    <div class="ach-icon">🏃‍♂️</div>
-                    <div>
-                        <div class="ach-name">Марафонец</div>
-                        <div class="ach-desc">Проучиться более 1 минуты (60 сек.) за раз</div>
-                    </div>
-                </div>
-                <div class="achievement-item locked" id="ach-activist">
-                    <div class="ach-icon">⚡</div>
-                    <div>
-                        <div class="ach-name">Активист</div>
-                        <div class="ach-desc">Написать 3 сообщения в чат (<span id="chat-counter">0</span>/3)</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        let totalSeconds = 23; 
-        let isRunning = true;
-        let messageCount = 0;
-
-        let achievements = { early: false, marathon: false, activist: false };
-
-        const sessionTimerElement = document.getElementById('session-timer');
-        const totalTimeElement = document.getElementById('total-study-time');
-        const topRomansTimeElement = document.getElementById('top-romans-time');
-        const userIndicator = document.getElementById('user-indicator');
-        const pauseBtn = document.getElementById('pause-btn');
-        const myBadgesContainer = document.getElementById('my-badges');
-        const chatInput = document.getElementById('chat-input');
-        const sendBtn = document.getElementById('send-btn');
-        const chatBox = document.getElementById('chat-box');
-        const chatCounterElement = document.getElementById('chat-counter');
-
-        function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = seconds % 60;
-            return `${hours}ч ${minutes}м ${secs}с`;
-        }
-
-        function formatTopTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            return `${hours}ч ${minutes}м`;
-        }
-
-        function unlockAchievement(id, key, name, icon) {
-            if (achievements[key]) return;
-            achievements[key] = true;
-
-            const achCard = document.getElementById(id);
-            achCard.classList.remove('locked');
-            achCard.classList.add('unlocked');
-
-            const miniBadge = document.createElement('div');
-            miniBadge.className = 'badge-mini';
-            miniBadge.innerHTML = `<span>${icon}</span> ${name}`;
-            myBadgesContainer.appendChild(miniBadge);
-
-            setTimeout(() => {
-                alert(`🎉 Отлично, Роман!\nВы получили значок: "${name}" ${icon}`);
-            }, 100);
-        }
-
-        // Проверка: Ранняя пташка
-        if (new Date().getHours() < 8) {
-            unlockAchievement('ach-early', 'early', 'Ранняя пташка', '🌅');
-        }
-
-        // Работа счетчиков времени
-        setInterval(() => {
-            if (isRunning) {
-                totalSeconds++;
-                sessionTimerElement.textContent = `${totalSeconds} сек.`;
-                totalTimeElement.textContent = formatTime(totalSeconds);
-                topRomansTimeElement.textContent = formatTopTime(totalSeconds);
-
-                if (totalSeconds >= 60) {
-                    unlockAchievement('ach-marathon', 'marathon', 'Марафонец', '🏃‍♂️');
+/**
+ * Функция 1: Сохранение накопленного времени учебной сессии в базу данных
+ * @param {string} userId - Уникальный ID студента (Романа)
+ * @param {number} secondsSpent - Сколько секунд длилась текущая сессия
+ */
+async function saveSession(userId, secondsSpent) {
+    try {
+        // Отправляем запрос на вставку новой строки в таблицу учебных сессий
+        const { data, error } = await supabase
+            .from('study_sessions')
+            .insert([
+                { 
+                    user_id: userId, 
+                    duration_seconds: secondsSpent,
+                    ended_at: new Date().toISOString() // Текущее время завершения
                 }
-            }
-        }, 1000);
+            ]);
 
-        // Работа чата
-        function sendMessage() {
-            const text = chatInput.value.trim();
-            if (!text) return;
+        if (error) throw error;
+        
+        console.log('Сессия успешно сохранена в Supabase:', data);
+        return true;
+    } catch (error) {
+        console.error('Ошибка при сохранении сессии:', error.message);
+        return false;
+    }
+}
 
-            const p = document.createElement('p');
-            p.innerHTML = `<strong>Роман Диордиев Олегович:</strong> ${text}`;
-            chatBox.appendChild(p);
-            chatBox.scrollTop = chatBox.scrollHeight;
-            chatInput.value = "";
+/**
+ * Функция 2: Обновление статуса активности (онлайн/перерыв/офлайн) в реальном времени
+ * @param {string} userId - Уникальный ID студента
+ * @param {string} currentStatus - Строка статуса ('online', 'pause', 'offline')
+ */
+async function updateOnlineStatus(userId, currentStatus) {
+    try {
+        // Обновляем поле status в таблице профилей пользователей
+        const { data, error } = await supabase
+            .from('profiles')
+            .update({ 
+                status: currentStatus,
+                last_seen: new Date().toISOString() // Фиксируем время последней активности
+            })
+            .eq('id', userId); // Фильтр: обновляем только строку текущего пользователя
 
-            messageCount++;
-            if (messageCount <= 3) chatCounterElement.textContent = messageCount;
+        if (error) throw error;
 
-            if (messageCount >= 3) {
-                unlockAchievement('ach-activist', 'activist', 'Активист', '⚡');
-            }
-        }
-
-        sendBtn.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
-
-        // Кнопки управления
-        pauseBtn.addEventListener('click', () => {
-            if (isRunning) {
-                isRunning = false;
-                pauseBtn.innerHTML = '▶ Продолжить';
-                userIndicator.className = 'status-dot status-pause';
-            } else {
-                isRunning = true;
-                pauseBtn.innerHTML = '☕ Перерыв';
-                userIndicator.className = 'status-dot status-online';
-            }
-        });
-
-        document.getElementById('stop-btn').addEventListener('click', () => {
-            isRunning = false;
-            userIndicator.className = 'status-dot status-offline';
-            alert(`Сессия завершена!\nРоман успешно отучился: ${formatTime(totalSeconds)}`);
-        });
-    </script>
-</body>
-</html>
+        console.log(`Статус пользователя изменен на "${currentStatus}"`);
+        return true;
+    } catch (error) {
+        console.error('Ошибка обновления статуса:', error.message);
+        return false;
+    }
+}

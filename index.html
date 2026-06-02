@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Учебная панель — Роман Диордиев Олегович</title>
+    <title>Учебная панель — Дуйсенбек Алмас Әлфарабиұлы</title>
     
     <style>
         body {
@@ -108,6 +108,7 @@
             font-weight: bold;
             margin-top: 0;
             margin-bottom: 15px;
+            text-align: center;
         }
 
         .user-status-row {
@@ -242,7 +243,7 @@
     <div class="dashboard-container">
 
         <div class="card">
-            <div class="user-name">Роман Диордиев Олегович</div>
+            <div class="user-name">Дүйсенбек Алмас Әлфарабиұлы</div>
             <div class="user-badges" id="my-badges"></div>
             <div class="timer-main">
                 <span>⏱</span> <span id="session-timer">23 сек.</span>
@@ -255,11 +256,11 @@
         </div>
 
         <div class="card">
-            <div class="card-title">🎥 Монитор группы</div>
+            <div class="card-title">👥 Монитор группы</div>
             <div class="user-status-row">
                 <div class="user-info-left">
                     <span class="status-dot" id="user-indicator"></span>
-                    <span class="group-user-name">Роман</span>
+                    <span class="group-user-name">Almas</span>
                 </div>
                 <div class="status-info-right">
                     <span class="location">🏠 Дома</span>
@@ -271,7 +272,8 @@
         <div class="card">
             <div class="card-title">💬 Общий чат</div>
             <div class="chat-messages" id="chat-box">
-                <p><strong>Ислам Бекишев:</strong> Всем продуктивной учебы сегодня!</p>
+                <p><strong>Дүйсенбек Алмас Әлфарабиұлы:</strong> 123</p>
+                <p><strong>Алмас Дүйсенбек:</strong> 321</p>
             </div>
             <div class="chat-input-zone">
                 <input type="text" id="chat-input" placeholder="Сообщение...">
@@ -287,7 +289,7 @@
                     <span class="total-time">16ч 51м</span>
                 </div>
                 <div class="top-item current-user">
-                    <span>🥈 Роман Диордиев (Вы)</span>
+                    <span>🥈 Алмас Дүйсенбек (Вы)</span>
                     <span class="total-time" id="top-romans-time">0ч 0м</span>
                 </div>
             </div>
@@ -326,7 +328,7 @@
         let totalSeconds = 23; 
         let isRunning = true;
         let messageCount = 0;
-        const currentUserId = "roman_user_id_123"; 
+        const currentUserId = "almas_user_id_777"; 
 
         let achievements = { early: false, marathon: false, activist: false };
 
@@ -355,7 +357,7 @@
         }
 
         // =========================================================
-        // ТРЕБУЕМЫЕ ФУНКЦИИ СВЯЗИ С СУПАНБЕЙС (SUPABASE FUNCTIONS)
+        // ФУНКЦИИ СВЯЗИ С SUPABASE ДЛЯ ЗАДАНИЯ
         // =========================================================
         async function saveSession(userId, secondsSpent) {
             try {
@@ -407,16 +409,14 @@
             myBadgesContainer.appendChild(miniBadge);
 
             setTimeout(() => {
-                alert(`🎉 Поздравляем, Роман!\nВы заработали значок: "${name}" ${icon}`);
+                alert(`🎉 Отлично, Алмас!\nВы получили достижение: "${name}" ${icon}`);
             }, 100);
         }
 
-        // Проверка времени для значка "Ранняя пташка"
         if (new Date().getHours() < 8) {
             unlockAchievement('ach-early', 'early', 'Ранняя пташка', '🌅');
         }
 
-        // Логика ежесекундного таймера
         setInterval(() => {
             if (isRunning) {
                 totalSeconds++;
@@ -430,13 +430,12 @@
             }
         }, 1000);
 
-        // Работа чата
         function sendMessage() {
             const text = chatInput.value.trim();
             if (!text) return;
 
             const p = document.createElement('p');
-            p.innerHTML = `<strong>Роман Диордиев Олегович:</strong> ${text}`;
+            p.innerHTML = `<strong>Дүйсенбек Алмас Әлфарабиұлы:</strong> ${text}`;
             chatBox.appendChild(p);
             chatBox.scrollTop = chatBox.scrollHeight;
             chatInput.value = "";
@@ -452,7 +451,6 @@
         sendBtn.addEventListener('click', sendMessage);
         chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
-        // Интерактивное управление кнопками сессии
         pauseBtn.addEventListener('click', () => {
             if (isRunning) {
                 isRunning = false;
@@ -472,10 +470,9 @@
             userIndicator.className = 'status-dot status-offline';
             saveSession(currentUserId, totalSeconds);
             updateOnlineStatus(currentUserId, 'offline');
-            alert(`Сессия завершена!\nРоман успешно отучился: ${formatTime(totalSeconds)}`);
+            alert(`Сессия завершена!\nВы успешно отучились: ${formatTime(totalSeconds)}`);
         });
 
-        // Задаем стартовый статус онлайн при входе
         updateOnlineStatus(currentUserId, 'online');
     </script>
 </body>
